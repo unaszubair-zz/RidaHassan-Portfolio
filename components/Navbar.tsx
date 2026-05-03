@@ -14,38 +14,30 @@ const links = [
 
 export default function Navbar() {
   const pathname = usePathname();
-  const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
 
   return (
-    <header
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
-      style={{
-        background: scrolled
-          ? "rgba(9,9,11,0.92)"
-          : "transparent",
-        backdropFilter: scrolled ? "blur(16px)" : "none",
-        WebkitBackdropFilter: scrolled ? "blur(16px)" : "none",
-        borderBottom: scrolled ? "1px solid var(--border)" : "1px solid transparent",
-      }}
-    >
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+    <header className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 pt-3 pb-0">
+      {/* Pill container */}
+      <div
+        className="max-w-5xl mx-auto flex items-center justify-between px-5 h-14 rounded-full"
+        style={{
+          background: "rgba(16, 18, 24, 0.88)",
+          border: "1px solid rgba(255,255,255,0.08)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+        }}
+      >
         <Link href="/" aria-label="Home">
           <Logo />
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex nav-pill">
+        <nav className="hidden md:flex items-center gap-1">
           {links.map((l) => (
             <Link
               key={l.href}
@@ -59,7 +51,7 @@ export default function Navbar() {
 
         {/* Mobile toggle */}
         <button
-          className="md:hidden p-2 rounded-lg transition-colors"
+          className="md:hidden p-2 rounded-lg"
           style={{ color: "var(--muted-2)" }}
           onClick={() => setOpen((p) => !p)}
           aria-label="Toggle menu"
@@ -70,15 +62,15 @@ export default function Navbar() {
 
       {/* Mobile drawer */}
       <div
-        className="md:hidden overflow-hidden transition-all duration-300"
+        className="md:hidden overflow-hidden transition-all duration-300 mx-4 rounded-2xl mt-1"
         style={{
-          maxHeight: open ? "200px" : "0px",
-          background: "rgba(13,14,17,0.97)",
-          borderBottom: open ? "1px solid var(--border)" : "none",
+          maxHeight: open ? "180px" : "0px",
+          background: "rgba(16,18,24,0.97)",
+          border: open ? "1px solid rgba(255,255,255,0.08)" : "none",
           backdropFilter: "blur(20px)",
         }}
       >
-        <nav className="px-6 py-4 flex flex-col gap-1">
+        <nav className="px-5 py-3 flex flex-col gap-1">
           {links.map((l) => (
             <Link
               key={l.href}
