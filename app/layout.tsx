@@ -1,14 +1,24 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-cormorant",
+});
 
 export const metadata: Metadata = {
-  title: "Rida Hassan — Portfolio",
+  title: "Rida Hasan — UI/UX & Branding Designer",
   description:
-    "Full-Stack Developer & UI/UX Designer passionate about building beautiful, functional digital experiences.",
-  keywords: ["Rida Hassan", "Portfolio", "Developer", "Designer"],
+    "I'm Rida—a Product Designer and Figma specialist dedicated to the art of digital silent luxury. Crafting seamless mobile apps, responsive web interfaces, and high-impact social media visuals.",
+  keywords: ["Rida Hasan", "UI/UX Designer", "Branding Designer", "Figma", "Product Designer"],
 };
 
 export default function RootLayout({
@@ -17,8 +27,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full">
-      <body className={`${inter.className} min-h-full flex flex-col antialiased`}>
+    <html lang="en" className={`${inter.variable} ${cormorant.variable}`}>
+      <body className="min-h-screen flex flex-col antialiased">
         {children}
       </body>
     </html>

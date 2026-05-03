@@ -1,147 +1,93 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Menu, X, Code2 } from "lucide-react";
+import Logo from "./Logo";
+import { Menu, X } from "lucide-react";
 
-const navLinks = [
-  { label: "About", href: "#about" },
-  { label: "Skills", href: "#skills" },
-  { label: "Experience", href: "#experience" },
-  { label: "Projects", href: "#projects" },
-  { label: "Contact", href: "#contact" },
+const links = [
+  { label: "Home", href: "/" },
+  { label: "Projects", href: "/projects" },
+  { label: "About me", href: "/about" },
 ];
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("");
+  const pathname = usePathname();
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-
-      const sections = navLinks.map((l) => l.href.slice(1));
-      let current = "";
-      for (const id of sections) {
-        const el = document.getElementById(id);
-        if (el && el.getBoundingClientRect().top <= 100) current = id;
-      }
-      setActiveSection(current);
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const handleLinkClick = (href: string) => {
-    setIsOpen(false);
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
-  };
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "glass border-b"
-          : "bg-transparent border-b border-transparent"
-      }`}
-      style={{ borderColor: isScrolled ? "var(--border)" : "transparent" }}
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+      style={{
+        background: scrolled
+          ? "rgba(9,9,11,0.92)"
+          : "transparent",
+        backdropFilter: scrolled ? "blur(16px)" : "none",
+        WebkitBackdropFilter: scrolled ? "blur(16px)" : "none",
+        borderBottom: scrolled ? "1px solid var(--border)" : "1px solid transparent",
+      }}
     >
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        {/* Logo */}
-        <a
-          href="#"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="flex items-center gap-2 group"
-        >
-          <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold transition-all duration-200 group-hover:scale-110"
-            style={{ background: "var(--accent)" }}
-          >
-            <Code2 size={16} />
-          </div>
-          <span className="font-bold text-lg hidden sm:block" style={{ color: "var(--text-primary)" }}>
-            Rida<span style={{ color: "var(--accent)" }}>.</span>
-          </span>
-        </a>
+      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <Link href="/" aria-label="Home">
+          <Logo />
+        </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-1">
-          {navLinks.map((link) => (
-            <button
-              key={link.href}
-              onClick={() => handleLinkClick(link.href)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                activeSection === link.href.slice(1)
-                  ? "text-white"
-                  : "hover:text-white"
-              }`}
-              style={{
-                color:
-                  activeSection === link.href.slice(1)
-                    ? "var(--accent-light)"
-                    : "var(--text-secondary)",
-                background:
-                  activeSection === link.href.slice(1)
-                    ? "var(--accent-glow)"
-                    : "transparent",
-              }}
+        <nav className="hidden md:flex nav-pill">
+          {links.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className={`nav-link ${pathname === l.href ? "active" : ""}`}
             >
-              {link.label}
-            </button>
+              {l.label}
+            </Link>
           ))}
-          <a
-            href="#contact"
-            onClick={(e) => {
-              e.preventDefault();
-              handleLinkClick("#contact");
-            }}
-            className="ml-2 btn-primary text-sm px-5 py-2"
-            style={{ padding: "0.5rem 1.25rem" }}
-          >
-            Hire Me
-          </a>
         </nav>
 
-        {/* Mobile Toggle */}
+        {/* Mobile toggle */}
         <button
-          onClick={() => setIsOpen(!isOpen)}
           className="md:hidden p-2 rounded-lg transition-colors"
-          style={{ color: "var(--text-secondary)" }}
+          style={{ color: "var(--muted-2)" }}
+          onClick={() => setOpen((p) => !p)}
           aria-label="Toggle menu"
         >
-          {isOpen ? <X size={20} /> : <Menu size={20} />}
+          {open ? <X size={20} /> : <Menu size={20} />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile drawer */}
       <div
-        className={`md:hidden glass border-t transition-all duration-300 overflow-hidden ${
-          isOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
-        }`}
-        style={{ borderColor: "var(--border)" }}
+        className="md:hidden overflow-hidden transition-all duration-300"
+        style={{
+          maxHeight: open ? "200px" : "0px",
+          background: "rgba(13,14,17,0.97)",
+          borderBottom: open ? "1px solid var(--border)" : "none",
+          backdropFilter: "blur(20px)",
+        }}
       >
         <nav className="px-6 py-4 flex flex-col gap-1">
-          {navLinks.map((link) => (
-            <button
-              key={link.href}
-              onClick={() => handleLinkClick(link.href)}
-              className="text-left px-4 py-3 rounded-lg text-sm font-medium transition-colors"
-              style={{ color: "var(--text-secondary)" }}
+          {links.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className={`nav-link text-base py-3 ${pathname === l.href ? "active" : ""}`}
             >
-              {link.label}
-            </button>
+              {l.label}
+            </Link>
           ))}
-          <a
-            href="#contact"
-            onClick={(e) => {
-              e.preventDefault();
-              handleLinkClick("#contact");
-            }}
-            className="btn-primary mt-2 text-sm"
-          >
-            Hire Me
-          </a>
         </nav>
       </div>
     </header>
